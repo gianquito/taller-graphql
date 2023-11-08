@@ -1,6 +1,5 @@
-# Taller-Frontend
+# Taller-GraphQL
 Taller 2023 - Ecommerce LibrosCdelU\
-Vista previa: https://taller-frontend-sage.vercel.app/
 \
 \
 Después de clonar:\
