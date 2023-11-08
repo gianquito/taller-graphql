@@ -3,7 +3,7 @@ Taller 2023 - Ecommerce LibrosCdelU\
 \
 \
 Después de clonar:\
-npm install\
+pip install -r requirements.txt\
 git pull\
 git branch (nombre branch)\
 git checkout  (nombre branch)\
