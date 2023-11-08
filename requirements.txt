@@ -1,0 +1,9 @@
+Flask==2.2.3
+psycopg2-binary==2.9.5
+sqlalchemy==1.4.49
+flask_cors==3.0.10
+flask_graphql==2.0.1
+Flask-SQLAlchemy==2.5.0
+graphene==2.1.9
+graphene_sqlalchemy==2.3.0
+requests==2.31.0
