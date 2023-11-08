@@ -88,8 +88,8 @@ def validateLogin():
     #Enviamos el codigo a google para validarlo
     Gresponse = requests.post(f"https://oauth2.googleapis.com/token",
                             data={"code": code,
-                                    "client_id": "922082614639-ogckog4dju31tcktv5618b0d37eedqoh.apps.googleusercontent.com",
-                                    "client_secret": "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",
+                                    "client_id": "clientid",
+                                    "client_secret": "secret",
                                     "redirect_uri": "http://localhost:3000",
                                     "grant_type": "authorization_code"}
                                 )
