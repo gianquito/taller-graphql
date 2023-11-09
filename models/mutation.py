@@ -25,6 +25,8 @@ from .linea_carrito import LineaCarrito as LineaCarritoModel
 from .usuario import Usuario as UsuarioModel
 from .sesion import Sesion as SesionModel
 
+from datetime import datetime
+
 class createUsuario(Mutation):
     class Arguments:
         id_usuario = String(required=True)
@@ -37,7 +39,8 @@ class createUsuario(Mutation):
     usuario = Field(lambda: Usuario)
 
     def mutate(self, info, id_usuario, nombre, apellido, email, imagen, rol):
-        usuario = UsuarioModel(id_usuario=id_usuario, nombre=nombre, apellido=apellido, email=email, imagen=imagen, rol=rol)
+        current_timestamp = datetime.now()
+        usuario = UsuarioModel(id_usuario=id_usuario, nombre=nombre, apellido=apellido, email=email, imagen=imagen, rol=rol, fecha_creacion=current_timestamp)
 
         db.session.add(usuario)
         db.session.commit()
