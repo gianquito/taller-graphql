@@ -63,21 +63,38 @@ def createSesion(userData):
 
     createSesionQuery = {
         'query': '''
-            mutation ($idSession: String!, $idUsuario: String!) {
-                createSesion(idSession: $idSession, idUsuario: $idUsuario) {
+            mutation ($idSesion: String!, $idUsuario: String!) {
+                createSesion(idSesion: $idSesion, idUsuario: $idUsuario) {
                     sesion {
-                        idSession
+                        idSesion
                     }
                 }
             }
         ''',
         'variables': {
-            'idSession': sesionId,
+            'idSesion': sesionId,
             'idUsuario': userData["sub"],
         }
     }
     requests.post("http://localhost:5000/graphql", json=createSesionQuery)
     return sesionId
+
+def deleteSesion(sesionId):
+    deleteSesionQuery = {
+        'query': '''
+            mutation ($idSesion: String!) {
+                deleteSesion(idSesion: $idSesion) {
+                    sesion {
+                        idSesion
+                    }
+                }
+            }
+        ''',
+        'variables': {
+            'idSesion': sesionId
+        }
+    }
+    return requests.post("http://localhost:5000/graphql", json=deleteSesionQuery)
 
 @app.route('/validate', methods=['POST']) # @ decorador
 def validateLogin():
@@ -88,8 +105,8 @@ def validateLogin():
     #Enviamos el codigo a google para validarlo
     Gresponse = requests.post(f"https://oauth2.googleapis.com/token",
                             data={"code": code,
-                                    "client_id": "clientid",
-                                    "client_secret": "secret",
+                                    "client_id": "922082614639-te6q4juqlgmiqomf96n0jq2p2go4bnqa.apps.googleusercontent.com",
+                                    "client_secret": "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",
                                     "redirect_uri": "http://localhost:3000",
                                     "grant_type": "authorization_code"}
                                 )
@@ -98,7 +115,7 @@ def validateLogin():
     jwtRes = requests.get(f"https://oauth2.googleapis.com/tokeninfo?id_token={Gresponse.json()['id_token']}")
     if(jwtRes.status_code != 200): return '', 401
     
-    #Crear usuario y session en db
+    #Crear usuario y sesion en db
     #Chequear que no exista
     userData = jwtRes.json()
     if(userExists(userData) == False):
@@ -106,6 +123,10 @@ def validateLogin():
 
     return createSesion(userData)
 
+@app.route('/logout', methods=['POST']) # @ decorador
+def userLogout():
+    sesionId = request.get_data(as_text=True)
+    return '', deleteSesion(sesionId).status_code
 
 @app.route('/', methods=['GET', 'POST', 'PUT']) # @ decorador
 def index():
