@@ -10,4 +10,4 @@ class Libro(db.Model):
     descripcion = db.Column(db.String(1000))
     dimensiones = db.Column(db.String(255))
     paginas = db.Column(db.Integer)
-    imagen = db.Column(db.BYTEA)
+    imagen = db.Column(db.LargeBinary)
