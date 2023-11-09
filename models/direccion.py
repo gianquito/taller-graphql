@@ -2,7 +2,7 @@ from api_config import db
 
 class Direccion(db.Model):
     __tablename__ = "direccion"
-    id_direccion = db.Column(db.Serial, primary_key=True)
+    id_direccion = db.Column(db.Integer, primary_key=True)
     calle = db.Column(db.String(255), nullable=False)
     numero = db.Column(db.Integer, nullable=False)
     id_usuario = db.Column(db.Text, db.ForeignKey("usuario.id_usuario"), nullable=False)
