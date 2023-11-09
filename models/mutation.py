@@ -46,14 +46,14 @@ class createUsuario(Mutation):
 
 class createSesion(Mutation):
     class Arguments:
-        id_session = String(required=True)
+        id_sesion = String(required=True)
         id_usuario = String(required=True)
 
     
     sesion = Field(lambda: Sesion)
 
-    def mutate(self, info, id_session, id_usuario):
-        sesion = SesionModel(id_session=id_session, id_usuario=id_usuario)
+    def mutate(self, info, id_sesion, id_usuario):
+        sesion = SesionModel(id_sesion=id_sesion, id_usuario=id_usuario)
 
         db.session.add(sesion)
         db.session.commit()

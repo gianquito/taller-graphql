@@ -25,7 +25,7 @@ class Query(ObjectType):
     libros = List(lambda: Libro, id=Int(), precio=Int())
     libros_en_carrito = List(lambda: LineaCarrito, id_carrito=Int(), id_producto=Int())
     usuarios = List(lambda: Usuario, id_usuario=String())
-    sesiones = List(lambda: Sesion, id_session=String())
+    sesiones = List(lambda: Sesion, id_sesion=String())
 
     def resolve_libros(self, info, id=None, precio=None):
         print(info.context.cookies.get("user_id"))
@@ -50,8 +50,8 @@ class Query(ObjectType):
             query = query.filter(UsuarioModel.id_usuario==id_usuario)
         return query.all()
     
-    def resolve_sesiones(self, info, id_session=None):
+    def resolve_sesiones(self, info, id_sesion=None):
         query = Sesion.get_query(info=info)
-        if id_session:
-            query = query.filter(SesionModel.id_session==id_session)
+        if id_sesion:
+            query = query.filter(SesionModel.id_sesion==id_sesion)
         return query.all()
