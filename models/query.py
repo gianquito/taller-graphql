@@ -1,3 +1,5 @@
+#from flask import abort
+from werkzeug.exceptions import HTTPException
 from graphene import (
     ObjectType,
     String,
@@ -104,6 +106,14 @@ class Query(ObjectType):
         return query.all()
 
     def resolve_deseos_libro(self, info, id_usuario=None, id_libro=None):
+        sesion_id = info.context.cookies.get("user_id")
+        if not sesion_id:
+            # Maneja el caso en que la cookie "user_id" no este presente o sea invalida.
+            raise HTTPException(status_code=401, detail="La cookie de sesión no está presente o es inválida.")
+        sesion = SesionModel.query.filter(SesionModel.id_sesion == sesion_id).first()
+        if sesion is None:
+            # Si la sesion no existe genera un error indicando que la sesión no esta autenticada.
+            raise HTTPException(status_code=401, detail="La sesión no existe o no está autenticada.")
         query = DeseoLibro.get_query(info=info)
         if id_usuario:
             query = query.filter(DeseoLibroModel.id_usuario == id_usuario)
@@ -112,6 +122,14 @@ class Query(ObjectType):
         return query.all()
 
     def resolve_direcciones(self, info, id_direccion=None, id_usuario=None):
+        sesion_id = info.context.cookies.get("user_id")
+        if not sesion_id:
+            # Maneja el caso en que la cookie "user_id" no este presente o sea invalida.
+            raise HTTPException(status_code=401, detail="La cookie de sesión no está presente o es inválida.")
+        sesion = SesionModel.query.filter(SesionModel.id_sesion == sesion_id).first()
+        if sesion is None:
+            # Si la sesion no existe genera un error indicando que la sesión no esta autenticada.
+            raise HTTPException(status_code=401, detail="La sesión no existe o no está autenticada.")
         query = Direccion.get_query(info=info)
         if id_direccion:
             query = query.filter(DireccionModel.id_direccion == id_direccion)
@@ -136,6 +154,14 @@ class Query(ObjectType):
         return query.all()
 
     def resolve_favoritos_libro(self, info, id_usuario=None, id_libro=None):
+        sesion_id = info.context.cookies.get("user_id")
+        if not sesion_id:
+            # Maneja el caso en que la cookie "user_id" no este presente o sea invalida.
+            raise HTTPException(status_code=401, detail="La cookie de sesión no está presente o es inválida.")
+        sesion = SesionModel.query.filter(SesionModel.id_sesion == sesion_id).first()
+        if sesion is None:
+            # Si la sesion no existe genera un error indicando que la sesión no esta autenticada.
+            raise HTTPException(status_code=401, detail="La sesión no existe o no está autenticada.")
         query = FavoritoLibro.get_query(info=info)
         if id_usuario:
             query = query.filter(FavoritoLibroModel.id_usuario == id_usuario)
@@ -192,15 +218,22 @@ class Query(ObjectType):
         return query.all()
     
     def resolve_libros(self, info, isbn=None, precio=None):
-        print(info.context.cookies.get("user_id"))
         query = Libro.get_query(info=info)
         if isbn:
             query = query.filter(LibroModel.isbn==isbn)
         if precio:
             query = query.filter(LibroModel.precio==precio)
         return query.all()
-    
+
     def resolve_libros_en_carrito(self, info, id_carrito=None, id_libro=None):
+        sesion_id = info.context.cookies.get("user_id")
+        if not sesion_id:
+            # Maneja el caso en que la cookie "user_id" no este presente o sea invalida.
+            raise HTTPException(status_code=401, detail="La cookie de sesión no está presente o es inválida.")
+        sesion = SesionModel.query.filter(SesionModel.id_sesion == sesion_id).first()
+        if sesion is None:
+            # Si la sesion no existe genera un error indicando que la sesión no esta autenticada.
+            raise HTTPException(status_code=401, detail="La sesión no existe o no está autenticada.")
         query = LineaCarrito.get_query(info=info)
         if id_carrito:
             query = query.filter(LineaCarritoModel.id_carrito==id_carrito)
@@ -209,6 +242,14 @@ class Query(ObjectType):
         return query.join(LibroModel).all()
 
     def resolve_lineas_pedidos(self, info, id_pedido=None, id_libro=None):
+        sesion_id = info.context.cookies.get("user_id")
+        if not sesion_id:
+            # Maneja el caso en que la cookie "user_id" no este presente o sea invalida.
+            raise HTTPException(status_code=401, detail="La cookie de sesión no está presente o es inválida.")
+        sesion = SesionModel.query.filter(SesionModel.id_sesion == sesion_id).first()
+        if sesion is None:
+            # Si la sesion no existe genera un error indicando que la sesión no esta autenticada.
+            raise HTTPException(status_code=401, detail="La sesión no existe o no está autenticada.")
         query = LineaPedido.get_query(info=info)
         if id_pedido:
             query = query.filter(LineaPedidoModel.id_pedido == id_pedido)
@@ -217,6 +258,14 @@ class Query(ObjectType):
         return query.all()
 
     def resolve_pedidos(self, info, id_pedido=None, id_envio=None, id_usuario=None, fecha=None):
+        sesion_id = info.context.cookies.get("user_id")
+        if not sesion_id:
+            # Maneja el caso en que la cookie "user_id" no este presente o sea invalida.
+            raise HTTPException(status_code=401, detail="La cookie de sesión no está presente o es inválida.")
+        sesion = SesionModel.query.filter(SesionModel.id_sesion == sesion_id).first()
+        if sesion is None:
+            # Si la sesion no existe genera un error indicando que la sesión no esta autenticada.
+            raise HTTPException(status_code=401, detail="La sesión no existe o no está autenticada.")
         query = Pedido.get_query(info=info)
         if id_pedido:
             query = query.filter(PedidoModel.id_pedido == id_pedido)
@@ -237,6 +286,14 @@ class Query(ObjectType):
         return query.all()
 
     def resolve_resenias(self, info, texto=None, valoracion=None, id_usuario=None, id_libro=None):
+        sesion_id = info.context.cookies.get("user_id")
+        if not sesion_id:
+            # Maneja el caso en que la cookie "user_id" no este presente o sea invalida.
+            raise HTTPException(status_code=401, detail="La cookie de sesión no está presente o es inválida.")
+        sesion = SesionModel.query.filter(SesionModel.id_sesion == sesion_id).first()
+        if sesion is None:
+            # Si la sesion no existe genera un error indicando que la sesión no esta autenticada.
+            raise HTTPException(status_code=401, detail="La sesión no existe o no está autenticada.")
         query = Resenia.get_query(info=info)
         if texto:
             query = query.filter(ReseniaModel.texto == texto)
@@ -255,6 +312,14 @@ class Query(ObjectType):
         return query.all()
 
     def resolve_tipos_envio(self, info, id_tipo_envio=None, descripcion=None):
+        sesion_id = info.context.cookies.get("user_id")
+        if not sesion_id:
+            # Maneja el caso en que la cookie "user_id" no este presente o sea invalida.
+            raise HTTPException(status_code=401, detail="La cookie de sesión no está presente o es inválida.")
+        sesion = SesionModel.query.filter(SesionModel.id_sesion == sesion_id).first()
+        if sesion is None:
+            # Si la sesion no existe genera un error indicando que la sesión no esta autenticada.
+            raise HTTPException(status_code=401, detail="La sesión no existe o no está autenticada.")
         query = TipoEnvio.get_query(info=info)
         if id_tipo_envio:
             query = query.filter(TipoEnvioModel.id_tipo_envio == id_tipo_envio)
@@ -263,6 +328,14 @@ class Query(ObjectType):
         return query.all()
     
     def resolve_usuarios(self, info, id_usuario=None):
+        sesion_id = info.context.cookies.get("user_id")
+        if not sesion_id:
+            # Maneja el caso en que la cookie "user_id" no este presente o sea invalida.
+            raise HTTPException(status_code=401, detail="La cookie de sesión no está presente o es inválida.")
+        sesion = SesionModel.query.filter(SesionModel.id_sesion == sesion_id).first()
+        if sesion is None:
+            # Si la sesion no existe genera un error indicando que la sesión no esta autenticada.
+            raise HTTPException(status_code=401, detail="La sesión no existe o no está autenticada.")
         query = Usuario.get_query(info=info)
         if id_usuario:
             query = query.filter(UsuarioModel.id_usuario==id_usuario)
