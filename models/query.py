@@ -108,7 +108,7 @@ class Query(ObjectType):
         return query.all()
 
     def resolve_deseos_libro(self, info, id_usuario=None, id_libro=None):
-        sesion_id = info.context.cookies.get("sesionId")
+        sesion_id = info.context.headers.get('sesionId')
         if not sesion_id:
             # Maneja el caso en que la cookie "sesionId" no este presente o sea invalida.
             raise GraphQLError('La cookie de sesión no está presente o es inválida.')
@@ -124,7 +124,7 @@ class Query(ObjectType):
         return query.all()
 
     def resolve_direcciones(self, info, id_direccion=None, id_usuario=None):
-        sesion_id = info.context.cookies.get("sesionId")
+        sesion_id = info.context.headers.get('sesionId')
         if not sesion_id:
             # Maneja el caso en que la cookie "sesionId" no este presente o sea invalida.
             raise GraphQLError('La cookie de sesión no está presente o es inválida.')
@@ -156,8 +156,7 @@ class Query(ObjectType):
         return query.all()
 
     def resolve_favoritos_libro(self, info, id_usuario=None, id_libro=None):
-        sesion_id = info.context.cookies.get("sesionId")
-        print("favorito" + sesion_id)
+        sesion_id = info.context.headers.get('sesionId')
         if not sesion_id:
             # Maneja el caso en que la cookie "sesionId" no este presente o sea invalida.
             raise GraphQLError('La cookie de sesión no está presente o es inválida.')
@@ -230,7 +229,6 @@ class Query(ObjectType):
 
     def resolve_libros_en_carrito(self, info, id_carrito=None, id_libro=None):
         sesion_id = info.context.headers.get('sesionId')
-        print(sesion_id)
         if not sesion_id:
             # Maneja el caso en que la cookie "sesionId" no este presente o sea invalida.
             raise GraphQLError('La cookie de sesión no está presente o es inválida.')
@@ -246,7 +244,7 @@ class Query(ObjectType):
         return query.join(LibroModel).all()
 
     def resolve_lineas_pedidos(self, info, id_pedido=None, id_libro=None):
-        sesion_id = info.context.cookies.get("sesionId")
+        sesion_id = info.context.headers.get('sesionId')
         if not sesion_id:
             # Maneja el caso en que la cookie "sesionId" no este presente o sea invalida.
             raise GraphQLError('La cookie de sesión no está presente o es inválida.')
@@ -262,7 +260,7 @@ class Query(ObjectType):
         return query.all()
 
     def resolve_pedidos(self, info, id_pedido=None, id_envio=None, id_usuario=None, fecha=None):
-        sesion_id = info.context.cookies.get("sesionId")
+        sesion_id = info.context.headers.get('sesionId')
         if not sesion_id:
             # Maneja el caso en que la cookie "sesionId" no este presente o sea invalida.
             raise GraphQLError('La cookie de sesión no está presente o es inválida.')
@@ -308,7 +306,7 @@ class Query(ObjectType):
         return query.all()
 
     def resolve_tipos_envio(self, info, id_tipo_envio=None, descripcion=None):
-        sesion_id = info.context.cookies.get("sesionId")
+        sesion_id = info.context.headers.get('sesionId')
         if not sesion_id:
             # Maneja el caso en que la cookie "sesionId" no este presente o sea invalida.
             raise GraphQLError('La cookie de sesión no está presente o es inválida.')
