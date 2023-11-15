@@ -38,6 +38,8 @@ from .objects import (
     Usuario
 )
 
+from datetime import datetime
+
 from .autor import Autor as AutorModel
 from .carrito import Carrito as CarritoModel
 from .ciudad import Ciudad as CiudadModel
@@ -660,12 +662,12 @@ class deleteLibro(Mutation):
 class createLineaCarrito(Mutation):
     class Arguments:
         id_carrito = Int(required=True)
-        id_producto = Int(required=True)
-        cantidad_producto = Int(required=True)
+        id_libro = Int(required=True)
+        cantidad = Int(required=True)
     
     linea_carrito = Field(lambda: LineaCarrito)
-    def mutate(self, info, id_carrito, id_producto, cantidad_producto):
-        linea_carrito = LineaCarritoModel(id_carrito=id_carrito, id_producto=id_producto, cantidad_producto=cantidad_producto)
+    def mutate(self, info, id_carrito, id_libro, cantidad):
+        linea_carrito = LineaCarritoModel(id_carrito=id_carrito, id_libro=id_libro, cantidad=cantidad)
 
         db.session.add(linea_carrito)
         db.session.commit()
@@ -675,16 +677,16 @@ class createLineaCarrito(Mutation):
 class updateLineaCarrito(Mutation):
     class Arguments:
         id_carrito = Int(required=True)
-        id_producto = Int(required=True)
-        cantidad_producto = Int()
+        id_libro = Int(required=True)
+        cantidad = Int()
     
     linea_carrito = Field(lambda: LineaCarrito)
 
-    def mutate(self, info, id_carrito, id_producto, cantidad_producto=None):
-        linea_carrito = LineaCarritoModel.query.get(id_producto) #Deberia ser por id_carrito?
+    def mutate(self, info, id_carrito, id_libro, cantidad=None):
+        linea_carrito = LineaCarritoModel.query.filter_by(id_carrito=id_carrito, id_libro=id_libro).first()
         if linea_carrito:
-            if(cantidad_producto):
-                linea_carrito.cantidad_producto = cantidad_producto
+            if(cantidad):
+                linea_carrito.cantidad = cantidad
 
             db.session.add(linea_carrito)
             db.session.commit()
@@ -693,13 +695,13 @@ class updateLineaCarrito(Mutation):
 
 class deleteLineaCarrito(Mutation):
     class Arguments:
-        id_producto = Int(required=True)
-        # !!!!!!!!!!!!!!! agregar id_carrito y comparar
+        id_libro = Int(required=True)
+        id_carrito = Int(required=True)
 
     linea_carrito = Field(lambda: LineaCarrito)
 
-    def mutate(self, info, id_producto):
-        linea_carrito = LineaCarritoModel.query.get(id_producto)
+    def mutate(self, info, id_libro, id_carrito):
+        linea_carrito = LineaCarritoModel.query.filter_by(id_carrito=id_carrito, id_libro=id_libro).first()
         # Deberia ser por id_carrito?
         if linea_carrito:
             db.session.delete(linea_carrito)
@@ -1038,7 +1040,7 @@ class createUsuario(Mutation):
     usuario = Field(lambda: Usuario)
 
     def mutate(self, info, id_usuario, nombre, apellido, email, imagen, rol):
-        usuario = UsuarioModel(id_usuario=id_usuario, nombre=nombre, apellido=apellido, email=email, imagen=imagen, rol=rol)
+        usuario = UsuarioModel(id_usuario=id_usuario, nombre=nombre, apellido=apellido, email=email, imagen=imagen, rol=rol, fecha_creacion=datetime.now())
 
         db.session.add(usuario)
         db.session.commit()
