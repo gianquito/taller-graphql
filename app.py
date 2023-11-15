@@ -53,7 +53,7 @@ def createUser(userData):
                 'apellido': userData["family_name"],
                 'email': userData["email"],
                 'imagen': userData["picture"],
-                'rol': 0,
+                'rol': '2',
             }
         }
     requests.post("http://localhost:5000/graphql", json=createUserQuery)

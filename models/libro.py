@@ -10,4 +10,4 @@ class Libro(db.Model):
     descripcion = db.Column(db.String(1000), nullable=False)
     dimensiones = db.Column(db.String(255), nullable=False)
     paginas = db.Column(db.Integer, nullable=False)
-    imagen = db.Column(db.LargeBinary)
+    imagen = db.Column(db.String)
