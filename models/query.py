@@ -81,7 +81,7 @@ class Query(ObjectType):
     libros_encuadernados = List(lambda: LibroEncuadernado, id_libro=Int(), id_encuadernado=Int())
     libros_generos = List(lambda: LibroGenero, id_libro=Int(), id_genero=Int())
     libros_promociones = List(lambda: LibroPromocion, id_libro=Int(), id_promocion_descuento=Int())
-    libros = List(lambda: Libro, isbn=Int(), precio=Float())
+    libros = List(lambda: Libro, isbn=Int(), precio=Float(), titulo=String())
     libros_en_carrito = List(lambda: LineaCarrito, id_carrito=Int(), id_libro=Int())
     lineas_pedidos = List(lambda: LineaPedido, id_pedido=Int(), id_libro=Int())
     pedidos = List(lambda: Pedido, id_pedido=Int(), id_envio=Int(), id_usuario=String(), fecha=String()) #Esta bien fecha = String?
@@ -96,7 +96,7 @@ class Query(ObjectType):
         if id_autor:
             query = query.filter(AutorModel.id_autor == id_autor)
         if nombre_autor:
-            query = query.filter(AutorModel.nombre_autor == nombre_autor)
+            query = query.filter(AutorModel.nombre_autor.startswith(nombre_autor))
         return query.all()
 
     def resolve_ciudades(self, info, cp=None, nombre_ciudad=None):
@@ -144,7 +144,7 @@ class Query(ObjectType):
         if id_editorial:
             query = query.filter(EditorialModel.id_editorial == id_editorial)
         if nombre_editorial:
-            query = query.filter(EditorialModel.nombre_editorial == nombre_editorial)
+            query = query.filter(EditorialModel.nombre_editorial.startswith(nombre_editorial))
         return query.all()
 
     def resolve_encuadernados(self, info, id_encuadernado=None, tipo=None):
@@ -152,7 +152,7 @@ class Query(ObjectType):
         if id_encuadernado:
             query = query.filter(EncuadernadoModel.id_encuadernado == id_encuadernado)
         if tipo:
-            query = query.filter(EncuadernadoModel.tipo == tipo)
+            query = query.filter(EncuadernadoModel.tipo.startswith(tipo))
         return query.all()
 
     def resolve_favoritos_libro(self, info, id_usuario=None, id_libro=None):
@@ -176,7 +176,7 @@ class Query(ObjectType):
         if id_genero:
             query = query.filter(GeneroModel.id_genero == id_genero)
         if nombre_genero:
-            query = query.filter(GeneroModel.nombre_genero == nombre_genero)
+            query = query.filter(GeneroModel.nombre_genero.startswith(nombre_genero))
         return query.all()
 
     def resolve_libros_autores(self, info, id_libro=None, id_autor=None):
@@ -219,12 +219,14 @@ class Query(ObjectType):
             query = query.filter(LibroPromocionModel.id_promocion_descuento == id_promocion_descuento)
         return query.all()
     
-    def resolve_libros(self, info, isbn=None, precio=None):
+    def resolve_libros(self, info, isbn=None, precio=None, titulo=None):
         query = Libro.get_query(info=info)
         if isbn:
             query = query.filter(LibroModel.isbn==isbn)
         if precio:
             query = query.filter(LibroModel.precio==precio)
+        if titulo:
+            query = query.filter(LibroModel.titulo.startswith(titulo))
         return query.all()
 
     def resolve_libros_en_carrito(self, info, id_carrito=None, id_libro=None):
