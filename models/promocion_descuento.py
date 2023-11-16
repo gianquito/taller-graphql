@@ -7,4 +7,4 @@ class PromocionDescuento(db.Model):
     porcentaje = db.Column(db.Numeric(10, 2), nullable=False, check_constraint="porcentaje > 0 AND porcentaje < 100")
     fecha_inicio = db.Column(db.TIMESTAMP, nullable=False)
     fecha_fin = db.Column(db.TIMESTAMP, nullable=False)
-    imagen = db.Column(db.LargeBinary)
+    imagen = db.Column(db.String)

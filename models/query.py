@@ -286,7 +286,7 @@ class Query(ObjectType):
         if id_promocion_descuento:
             query = query.filter(PromocionDescuentoModel.id_promocion_descuento == id_promocion_descuento)
         if nombre_promocion:
-            query = query.filter(PromocionDescuentoModel.nombre_promocion == nombre_promocion)
+            query = query.filter(PromocionDescuentoModel.nombre_promocion.startswith(nombre_promocion))
         return query.all()
 
     def resolve_resenias(self, info, texto=None, valoracion=None, id_usuario=None, id_libro=None):
