@@ -66,13 +66,13 @@ from .usuario import Usuario as UsuarioModel
 
 class createAutor(Mutation):
     class Arguments:
-        id_autor = Int(required=True)
+        id_autor = Int()
         nombre_autor = String(required=True)
     
     autor = Field(lambda: Autor)
 
-    def mutate(self, info, id_autor, nombre_autor):
-        autor = AutorModel(id_autor=id_autor, nombre_autor=nombre_autor)
+    def mutate(self, info, nombre_autor):
+        autor = AutorModel(nombre_autor=nombre_autor)
 
         db.session.add(autor)
         db.session.commit()
@@ -189,7 +189,6 @@ class deleteDeseoLibro(Mutation):
 
 class createDireccion(Mutation):
     class Arguments:
-        id_direccion = Int(required=True)
         calle = String(required=True)
         numero = Int(required=True)
         id_usuario = String(required=True)
@@ -197,9 +196,9 @@ class createDireccion(Mutation):
 
     direccion = Field(lambda: Direccion)
 
-    def mutate(self, info, id_direccion, calle, numero, id_usuario, cp_ciudad):
+    def mutate(self, info, calle, numero, id_usuario, cp_ciudad):
         direccion = DireccionModel(
-            id_direccion=id_direccion,
+            
             calle=calle,
             numero=numero,
             id_usuario=id_usuario,
@@ -254,13 +253,12 @@ class deleteDireccion(Mutation):
 
 class createEditorial(Mutation):
     class Arguments:
-        id_editorial = Int(required=True)
         nombre_editorial = String(required=True)
     
     editorial = Field(lambda: Editorial)
 
-    def mutate(self, info, id_editorial, nombre_editorial):
-        editorial = EditorialModel(id_editorial=id_editorial, nombre_editorial=nombre_editorial)
+    def mutate(self, info, nombre_editorial):
+        editorial = EditorialModel(nombre_editorial=nombre_editorial)
 
         db.session.add(editorial)
         db.session.commit()
@@ -300,13 +298,12 @@ class deleteEditorial(Mutation):
 
 class createEncuadernado(Mutation):
     class Arguments:
-        id_encuadernado = Int(required=True)
         tipo = String(required=True)
     
     encuadernado = Field(lambda: Encuadernado)
 
-    def mutate(self, info, id_encuadernado, tipo):
-        encuadernado = EncuadernadoModel(id_encuadernado=id_encuadernado, tipo=tipo)
+    def mutate(self, info, tipo):
+        encuadernado = EncuadernadoModel(tipo=tipo)
 
         db.session.add(encuadernado)
         db.session.commit()
@@ -379,13 +376,12 @@ class deleteFavoritoLibro(Mutation):
 
 class createGenero(Mutation):
     class Arguments:
-        id_genero = Int(required=True)
         nombre_genero = String(required=True)
     
     genero = Field(lambda: Genero)
 
-    def mutate(self, info, id_genero, nombre_genero):
-        genero = GeneroModel(id_genero=id_genero, nombre_genero=nombre_genero)
+    def mutate(self, info, nombre_genero):
+        genero = GeneroModel(nombre_genero=nombre_genero)
 
         db.session.add(genero)
         db.session.commit()
