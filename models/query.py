@@ -11,7 +11,10 @@ from graphene import (
     Float
 )
 
+from sqlalchemy import func
+
 from graphql import GraphQLError
+
 
 # from .funko import Funko as FunkoModel
 # from .objects import (
@@ -226,7 +229,7 @@ class Query(ObjectType):
         if precio:
             query = query.filter(LibroModel.precio==precio)
         if titulo:
-            query = query.filter(LibroModel.titulo.startswith(titulo))
+            query = query.filter(func.lower(LibroModel.titulo).startswith(func.lower(titulo)))
         return query.all()
 
     def resolve_libros_en_carrito(self, info, id_carrito=None, id_libro=None):
