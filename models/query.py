@@ -107,7 +107,7 @@ class Query(ObjectType):
         if cp:
             query = query.filter(CiudadModel.cp == cp)
         if nombre_ciudad:
-            query = query.filter(CiudadModel.nombre_ciudad == nombre_ciudad)
+            query = query.filter(CiudadModel.nombre_ciudad.startswith(nombre_ciudad))
         return query.all()
 
     def resolve_deseos_libro(self, info, id_usuario=None, id_libro=None):
