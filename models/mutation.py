@@ -440,17 +440,17 @@ class createLibroAutor(Mutation):
 class deleteLibroAutor(Mutation):
     class Arguments:
         id_libro = Int(required=True)
-        id_autor = Int(required=True)
 
     libro_autor = Field(lambda: LibroAutor)
 
-    def mutate(self, info, id_libro, id_autor):
-        libro_autor = LibroAutorModel.query.filter_by(id_libro=id_libro, id_autor=id_autor).first()
+    def mutate(self, info, id_libro):
+        libro_autor = LibroAutorModel.query.filter_by(id_libro=id_libro).all()
         if libro_autor:
-            db.session.delete(libro_autor)
+            for libro_autor_instance in libro_autor:
+                db.session.delete(libro_autor_instance)
             db.session.commit()
 
-        return deleteLibroAutor(libro_autor=libro_autor)
+        return deleteLibroAutor(libro_autor=libro_autor[0])
 
 class createLibroEditorial(Mutation):
     class Arguments:
@@ -470,17 +470,17 @@ class createLibroEditorial(Mutation):
 class deleteLibroEditorial(Mutation):
     class Arguments:
         id_libro = Int(required=True)
-        id_editorial = Int(required=True)
 
     libro_editorial = Field(lambda: LibroEditorial)
 
-    def mutate(self, info, id_libro, id_editorial):
-        libro_editorial = LibroEditorialModel.query.filter_by(id_libro=id_libro, id_editorial=id_editorial).first()
+    def mutate(self, info, id_libro):
+        libro_editorial = LibroEditorialModel.query.filter_by(id_libro=id_libro).all()
         if libro_editorial:
-            db.session.delete(libro_editorial)
+            for libro_editorial_instance in libro_editorial:
+                db.session.delete(libro_editorial_instance)
             db.session.commit()
 
-        return deleteLibroEditorial(libro_editorial=libro_editorial)
+        return deleteLibroEditorial(libro_editorial=libro_editorial[0])
 
 class createLibroEncuadernado(Mutation):
     class Arguments:
@@ -503,17 +503,17 @@ class createLibroEncuadernado(Mutation):
 class deleteLibroEncuadernado(Mutation):
     class Arguments:
         id_libro = Int(required=True)
-        id_encuadernado = Int(required=True)
 
     libro_encuadernado = Field(lambda: LibroEncuadernado)
 
-    def mutate(self, info, id_libro, id_encuadernado):
-        libro_encuadernado = LibroEncuadernadoModel.query.filter_by(id_libro=id_libro, id_encuadernado=id_encuadernado).first()
+    def mutate(self, info, id_libro):
+        libro_encuadernado = LibroEncuadernadoModel.query.filter_by(id_libro=id_libro).all()
         if libro_encuadernado:
-            db.session.delete(libro_encuadernado)
+            for libro_encuadernado_instance in libro_encuadernado:
+                db.session.delete(libro_encuadernado_instance)
             db.session.commit()
 
-        return deleteLibroEncuadernado(libro_encuadernado=libro_encuadernado)
+        return deleteLibroEncuadernado(libro_encuadernado=libro_encuadernado[0])
 
 class createLibroGenero(Mutation):
     class Arguments:
@@ -533,17 +533,17 @@ class createLibroGenero(Mutation):
 class deleteLibroGenero(Mutation):
     class Arguments:
         id_libro = Int(required=True)
-        id_genero = Int(required=True)
 
     libro_genero = Field(lambda: LibroGenero)
 
-    def mutate(self, info, id_libro, id_genero):
-        libro_genero = LibroGeneroModel.query.filter_by(id_libro=id_libro, id_genero=id_genero).first()
+    def mutate(self, info, id_libro):
+        libro_genero = LibroGeneroModel.query.filter_by(id_libro=id_libro).all()
         if libro_genero:
-            db.session.delete(libro_genero)
+            for libro_genero_instance in libro_genero:
+                db.session.delete(libro_genero_instance)
             db.session.commit()
 
-        return deleteLibroGenero(libro_genero=libro_genero)
+        return deleteLibroGenero(libro_genero=libro_genero[0])
 
 class createLibroPromocion(Mutation):
     class Arguments:
