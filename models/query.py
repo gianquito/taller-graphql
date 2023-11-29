@@ -108,14 +108,6 @@ class Query(ObjectType):
         return query.all()
 
     def resolve_deseos_libro(self, info, id_usuario=None, id_libro=None):
-        sesion_id = info.context.headers.get('sesionId')
-        if not sesion_id:
-            # Maneja el caso en que la cookie "sesionId" no este presente o sea invalida.
-            raise GraphQLError('La cookie de sesión no está presente o es inválida.')
-        sesion = SesionModel.query.filter(SesionModel.id_sesion == sesion_id).first()
-        if sesion is None:
-            # Si la sesion no existe genera un error indicando que la sesión no esta autenticada.
-            raise GraphQLError('La sesión no existe o no está autenticada.')
         query = DeseoLibro.get_query(info=info)
         if id_usuario:
             query = query.filter(DeseoLibroModel.id_usuario == id_usuario)
