@@ -7,3 +7,4 @@ Flask-SQLAlchemy==2.5.0
 graphene==2.1.9
 graphene_sqlalchemy==2.3.0
 requests==2.31.0
+Werkzeug==2.2.2

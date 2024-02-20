@@ -110,10 +110,10 @@ def validateLogin():
                                     "redirect_uri": "http://localhost:3000",
                                     "grant_type": "authorization_code"}
                                 )
-    if(Gresponse.status_code != 200): return '', 401
+    if(Gresponse.status_code != 200): return Gresponse.json(), 401
     #A partir de la respuesta de google solicitamos un JWT con informacion del usuario
     jwtRes = requests.get(f"https://oauth2.googleapis.com/tokeninfo?id_token={Gresponse.json()['id_token']}")
-    if(jwtRes.status_code != 200): return '', 401
+    if(jwtRes.status_code != 200): return jwtRes.json(), 401
     
     #Crear usuario y sesion en db
     #Chequear que no exista

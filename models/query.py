@@ -271,9 +271,9 @@ class Query(ObjectType):
         if id_envio:
             query = query.filter(PedidoModel.id_envio == id_envio)
         if id_usuario:
-            query = query.filter(LineaPedidoModel.id_usuario == id_usuario)
+            query = query.filter(PedidoModel.id_usuario == id_usuario)
         if fecha:
-            query = query.filter(LineaPedidoModel.fecha == fecha)
+            query = query.filter(PedidoModel.fecha == fecha)
         return query.all()
 
     def resolve_promociones_descuento(self, info, id_promocion_descuento=None, nombre_promocion=None):
