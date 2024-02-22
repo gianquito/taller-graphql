@@ -31,10 +31,9 @@ from .objects import (
                     FavoritoLibro,
                     Genero,
                     LibroAutor,
-                    LibroEditorial,
-                    LibroEncuadernado,
+                    Ejemplar,
                     LibroGenero,
-                    LibroPromocion,
+                    EjemplarPromocion,
                     Libro,
                     LineaCarrito,
                     LineaPedido,
@@ -54,10 +53,8 @@ from .encuadernado import Encuadernado as EncuadernadoModel
 from .favorito_libro import FavoritoLibro as FavoritoLibroModel
 from .genero import Genero as GeneroModel
 from .libro_autor import LibroAutor as LibroAutorModel
-from .libro_editorial import LibroEditorial as LibroEditorialModel
-from .libro_encuadernado import LibroEncuadernado as LibroEncuadernadoModel
 from .libro_genero import LibroGenero as LibroGeneroModel
-from .libro_promocion import LibroPromocion as LibroPromocionModel
+from .ejemplar_promocion import EjemplarPromocion as EjemplarPromocionModel
 from .libro import Libro as LibroModel
 from .linea_carrito import LineaCarrito as LineaCarritoModel
 from .linea_pedido import LineaPedido as LineaPedidoModel
@@ -67,8 +64,7 @@ from .resenia import Resenia as ReseniaModel
 from .sesion import Sesion as SesionModel
 from .tipo_envio import TipoEnvio as TipoEnvioModel
 from .usuario import Usuario as UsuarioModel
-
-
+from .ejemplar import Ejemplar as EjemplarModel
 
 class Query(ObjectType):
     autores = List(lambda: Autor, id_autor=Int(), nombre_autor=String())
@@ -80,20 +76,36 @@ class Query(ObjectType):
     favoritos_libro = List(lambda: FavoritoLibro, id_usuario=String(), id_libro=Int())
     generos = List(lambda: Genero, id_genero=Int(), nombre_genero=String())
     libros_autores = List(lambda: LibroAutor, id_libro=Int(), id_autor=Int())
-    libros_editoriales = List(lambda: LibroEditorial, id_libro=Int(), id_editorial=Int())
-    libros_encuadernados = List(lambda: LibroEncuadernado, id_libro=Int(), id_encuadernado=Int())
     libros_generos = List(lambda: LibroGenero, id_libro=Int(), id_genero=Int())
-    libros_promociones = List(lambda: LibroPromocion, id_libro=Int(), id_promocion_descuento=Int())
-    libros = List(lambda: Libro, isbn=Int(), precio=Float(), titulo=String())
-    libros_en_carrito = List(lambda: LineaCarrito, id_carrito=Int(), id_libro=Int())
-    lineas_pedidos = List(lambda: LineaPedido, id_pedido=Int(), id_libro=Int())
+    ejemplares_promociones = List(lambda: EjemplarPromocion, id_ejemplar=Int(), id_promocion_descuento=Int())
+    libros = List(lambda: Libro, id_libro=Int(), titulo=String())
+    ejemplares_en_carrito = List(lambda: LineaCarrito, id_carrito=Int(), id_ejemplar=Int())
+    lineas_pedidos = List(lambda: LineaPedido, id_pedido=Int(), id_ejemplar=Int())
     pedidos = List(lambda: Pedido, id_pedido=Int(), id_envio=Int(), id_usuario=String(), fecha=String()) #Esta bien fecha = String?
     promociones_descuento = List(lambda: PromocionDescuento, id_promocion_descuento=Int(), nombre_promocion=String())
     resenias = List(lambda: Resenia, texto=String(), valoracion=Int(), id_usuario=String(), id_libro=Int())
     sesiones = List(lambda: Sesion, id_sesion=String())
     tipos_envio = List(lambda: TipoEnvio, id_tipo_envio=Int(), descripcion=String())
     usuarios = List(lambda: Usuario, id_usuario=String())
+    ejemplares = List(lambda: Ejemplar, isbn=Int(), precio=Float(), stock=Int(), dimensiones=String(), paginas=Int(), id_libro=Int(), id_editorial=Int(), id_encuadernado=Int())
     
+
+    def resolve_ejemplares(self, info, isbn=None, precio=None, stock=None, id_libro=None, id_editorial=None, id_encuadernado=None):
+        query = Ejemplar.get_query(info=info)
+        if isbn:
+            query = query.filter(EjemplarModel.isbn == isbn)
+        if precio:
+            query = query.filter(EjemplarModel.precio == precio)
+        if stock:
+            query = query.filter(EjemplarModel.stock == stock)
+        if id_libro:
+            query = query.filter(EjemplarModel.id_libro == id_libro)
+        if id_editorial:
+            query = query.filter(EjemplarModel.id_editorial == id_editorial)
+        if id_encuadernado:
+            query = query.filter(EjemplarModel.id_encuadernado == id_encuadernado)
+        return query.all()
+
     def resolve_autores(self, info, id_autor=None, nombre_autor=None):
         query = Autor.get_query(info=info)
         if id_autor:
@@ -182,21 +194,6 @@ class Query(ObjectType):
             query = query.filter(LibroAutorModel.id_autor == id_autor)
         return query.all()
 
-    def resolve_libros_editoriales(self, info, id_libro=None, id_editorial=None):
-        query = LibroEditorial.get_query(info=info)
-        if id_libro:
-            query = query.filter(LibroEditorialModel.id_libro == id_libro)
-        if id_editorial:
-            query = query.filter(LibroEditorialModel.id_editorial == id_editorial)
-        return query.all()
-
-    def resolve_libros_encuadernados(self, info, id_libro=None, id_encuadernado=None):
-        query = LibroEncuadernado.get_query(info=info)
-        if id_libro:
-            query = query.filter(LibroEncuadernadoModel.id_libro == id_libro)
-        if id_encuadernado:
-            query = query.filter(LibroEncuadernadoModel.id_encuadernado == id_encuadernado)
-        return query.all()
 
     def resolve_libros_generos(self, info, id_libro=None, id_genero=None):
         query = LibroGenero.get_query(info=info)
@@ -206,25 +203,23 @@ class Query(ObjectType):
             query = query.filter(LibroGeneroModel.id_genero == id_genero)
         return query.all()
 
-    def resolve_libros_promociones(self, info, id_libro=None, id_promocion_descuento=None):
-        query = LibroPromocion.get_query(info=info)
-        if id_libro:
-            query = query.filter(LibroPromocionModel.id_libro == id_libro)
+    def resolve_ejemplares_promociones(self, info, id_ejemplar=None, id_promocion_descuento=None):
+        query = EjemplarPromocion.get_query(info=info)
+        if id_ejemplar:
+            query = query.filter(EjemplarPromocionModel.id_ejemplar == id_ejemplar)
         if id_promocion_descuento:
-            query = query.filter(LibroPromocionModel.id_promocion_descuento == id_promocion_descuento)
+            query = query.filter(EjemplarPromocionModel.id_promocion_descuento == id_promocion_descuento)
         return query.all()
     
-    def resolve_libros(self, info, isbn=None, precio=None, titulo=None):
+    def resolve_libros(self, info, id_libro=None, titulo=None):
         query = Libro.get_query(info=info)
-        if isbn:
-            query = query.filter(LibroModel.isbn==isbn)
-        if precio:
-            query = query.filter(LibroModel.precio==precio)
+        if id_libro:
+            query = query.filter(LibroModel.id_libro==id_libro)
         if titulo:
             query = query.filter(func.lower(LibroModel.titulo).startswith(func.lower(titulo)))
         return query.all()
 
-    def resolve_libros_en_carrito(self, info, id_carrito=None, id_libro=None):
+    def resolve_ejemplares_en_carrito(self, info, id_carrito=None, id_ejemplar=None):
         sesion_id = info.context.headers.get('sesionId')
         if not sesion_id:
             # Maneja el caso en que la cookie "sesionId" no este presente o sea invalida.
@@ -236,11 +231,11 @@ class Query(ObjectType):
         query = LineaCarrito.get_query(info=info)
         if id_carrito:
             query = query.filter(LineaCarritoModel.id_carrito==id_carrito)
-        if id_libro:
-            query = query.filter(LineaCarritoModel.id_libro==id_libro)
-        return query.join(LibroModel).all()
+        if id_ejemplar:
+            query = query.filter(LineaCarritoModel.id_ejemplar==id_ejemplar)
+        return query.join(EjemplarModel).all()
 
-    def resolve_lineas_pedidos(self, info, id_pedido=None, id_libro=None):
+    def resolve_lineas_pedidos(self, info, id_pedido=None, id_ejemplar=None):
         sesion_id = info.context.headers.get('sesionId')
         if not sesion_id:
             # Maneja el caso en que la cookie "sesionId" no este presente o sea invalida.
@@ -252,8 +247,8 @@ class Query(ObjectType):
         query = LineaPedido.get_query(info=info)
         if id_pedido:
             query = query.filter(LineaPedidoModel.id_pedido == id_pedido)
-        if id_libro:
-            query = query.filter(LineaPedidoModel.id_libro == id_libro)
+        if id_ejemplar:
+            query = query.filter(LineaPedidoModel.id_ejemplar == id_ejemplar)
         return query.all()
 
     def resolve_pedidos(self, info, id_pedido=None, id_envio=None, id_usuario=None, fecha=None):
