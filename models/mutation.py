@@ -23,10 +23,8 @@ from .objects import (
     FavoritoLibro,
     Genero,
     LibroAutor,
-    LibroEditorial,
-    LibroEncuadernado,
     LibroGenero,
-    LibroPromocion,
+    EjemplarPromocion,
     Libro,
     LineaCarrito,
     LineaPedido,
@@ -35,7 +33,8 @@ from .objects import (
     Resenia,
     Sesion,
     TipoEnvio,
-    Usuario
+    Usuario,
+    Ejemplar
 )
 
 from datetime import datetime
@@ -50,10 +49,8 @@ from .encuadernado import Encuadernado as EncuadernadoModel
 from .favorito_libro import FavoritoLibro as FavoritoLibroModel
 from .genero import Genero as GeneroModel
 from .libro_autor import LibroAutor as LibroAutorModel
-from .libro_editorial import LibroEditorial as LibroEditorialModel
-from .libro_encuadernado import LibroEncuadernado as LibroEncuadernadoModel
 from .libro_genero import LibroGenero as LibroGeneroModel
-from .libro_promocion import LibroPromocion as LibroPromocionModel
+from .ejemplar_promocion import EjemplarPromocion as EjemplarPromocionModel
 from .libro import Libro as LibroModel
 from .linea_carrito import LineaCarrito as LineaCarritoModel
 from .linea_pedido import LineaPedido as LineaPedidoModel
@@ -63,6 +60,7 @@ from .resenia import Resenia as ReseniaModel
 from .sesion import Sesion as SesionModel
 from .tipo_envio import TipoEnvio as TipoEnvioModel
 from .usuario import Usuario as UsuarioModel
+from .ejemplar import Ejemplar as EjemplarModel
 
 class createAutor(Mutation):
     class Arguments:
@@ -452,68 +450,6 @@ class deleteLibroAutor(Mutation):
 
         return deleteLibroAutor(libro_autor=libro_autor[0])
 
-class createLibroEditorial(Mutation):
-    class Arguments:
-        id_libro = Int(required=True)
-        id_editorial = Int(required=True)
-    
-    libro_editorial = Field(lambda: LibroEditorial)
-
-    def mutate(self, info, id_libro, id_editorial):
-        libro_editorial = LibroEditorialModel(id_libro=id_libro, id_editorial=id_editorial)
-
-        db.session.add(libro_editorial)
-        db.session.commit()
-        
-        return createLibroEditorial(libro_editorial=libro_editorial)
-
-class deleteLibroEditorial(Mutation):
-    class Arguments:
-        id_libro = Int(required=True)
-
-    libro_editorial = Field(lambda: LibroEditorial)
-
-    def mutate(self, info, id_libro):
-        libro_editorial = LibroEditorialModel.query.filter_by(id_libro=id_libro).all()
-        if libro_editorial:
-            for libro_editorial_instance in libro_editorial:
-                db.session.delete(libro_editorial_instance)
-            db.session.commit()
-
-        return deleteLibroEditorial(libro_editorial=libro_editorial[0])
-
-class createLibroEncuadernado(Mutation):
-    class Arguments:
-        id_libro = Int(required=True)
-        id_encuadernado = Int(required=True)
-
-    libro_encuadernado = Field(lambda: LibroEncuadernado)
-
-    def mutate(self, info, id_libro, id_encuadernado):
-        libro_encuadernado = LibroEncuadernadoModel(
-            id_libro=id_libro,
-            id_encuadernado=id_encuadernado
-        )
-
-        db.session.add(libro_encuadernado)
-        db.session.commit()
-
-        return createLibroEncuadernado(libro_encuadernado=libro_encuadernado)
-
-class deleteLibroEncuadernado(Mutation):
-    class Arguments:
-        id_libro = Int(required=True)
-
-    libro_encuadernado = Field(lambda: LibroEncuadernado)
-
-    def mutate(self, info, id_libro):
-        libro_encuadernado = LibroEncuadernadoModel.query.filter_by(id_libro=id_libro).all()
-        if libro_encuadernado:
-            for libro_encuadernado_instance in libro_encuadernado:
-                db.session.delete(libro_encuadernado_instance)
-            db.session.commit()
-
-        return deleteLibroEncuadernado(libro_encuadernado=libro_encuadernado[0])
 
 class createLibroGenero(Mutation):
     class Arguments:
@@ -545,58 +481,48 @@ class deleteLibroGenero(Mutation):
 
         return deleteLibroGenero(libro_genero=libro_genero[0])
 
-class createLibroPromocion(Mutation):
+class createEjemplarPromocion(Mutation):
     class Arguments:
-        id_libro = Int(required=True)
+        id_ejemplar = Int(required=True)
         id_promocion_descuento = Int(required=True)
     
-    libro_promocion = Field(lambda: LibroPromocion)
+    ejemplar_promocion = Field(lambda: EjemplarPromocion)
 
-    def mutate(self, info, id_libro, id_promocion_descuento):
-        libro_promocion = LibroPromocionModel(id_libro=id_libro, id_promocion_descuento=id_promocion_descuento)
+    def mutate(self, info, id_ejemplar, id_promocion_descuento):
+        ejemplar_promocion = EjemplarPromocionModel(id_ejemplar=id_ejemplar, id_promocion_descuento=id_promocion_descuento)
 
-        db.session.add(libro_promocion)
+        db.session.add(ejemplar_promocion)
         db.session.commit()
         
-        return createLibroPromocion(libro_promocion=libro_promocion)
+        return createEjemplarPromocion(ejemplar_promocion=ejemplar_promocion)
 
-class deleteLibroPromocion(Mutation):
+class deleteEjemplarPromocion(Mutation):
     class Arguments:
-        id_libro = Int(required=True)
+        id_ejemplar = Int(required=True)
         id_promocion_descuento = Int(required=True)
 
-    libro_promocion = Field(lambda: LibroPromocion)
+    ejemplar_promocion = Field(lambda: EjemplarPromocion)
 
-    def mutate(self, info, id_libro, id_promocion_descuento):
-        libro_promocion = LibroPromocionModel.query.filter_by(id_libro=id_libro, id_promocion_descuento=id_promocion_descuento).first()
-        if libro_promocion:
-            db.session.delete(libro_promocion)
+    def mutate(self, info, id_ejemplar, id_promocion_descuento):
+        ejemplar_promocion = EjemplarPromocionModel.query.filter_by(id_ejemplar=id_ejemplar, id_promocion_descuento=id_promocion_descuento).first()
+        if ejemplar_promocion:
+            db.session.delete(ejemplar_promocion)
             db.session.commit()
 
-        return deleteLibroPromocion(libro_promocion=libro_promocion)
+        return deleteEjemplarPromocion(ejemplar_promocion=ejemplar_promocion)
 
 class createLibro(Mutation):
     class Arguments:
-        isbn = Int(required=True)
         titulo = String(required=True)
-        precio = Float(required=True)
-        stock = Int(required=True)
         descripcion = String(required=True)
-        dimensiones = String(required=True)
-        paginas = Int(required=True)
         imagen = String()
 
     libro = Field(lambda: Libro)
 
-    def mutate(self, info, isbn, titulo, precio, stock, descripcion, dimensiones, paginas, imagen=None):
+    def mutate(self, info, titulo, descripcion, imagen=None):
         libro = LibroModel(
-            isbn=isbn,
             titulo=titulo,
-            precio=precio,
-            stock=stock,
             descripcion=descripcion,
-            dimensiones=dimensiones,
-            paginas=paginas,
             imagen=imagen
         )
 
@@ -607,32 +533,20 @@ class createLibro(Mutation):
 
 class updateLibro(Mutation):
     class Arguments:
-        isbn = Int(required=True)
+        id_libro = Int(required=True)
         titulo = String()
-        precio = Float()
-        stock = Int()
         descripcion = String()
-        dimensiones = String()
-        paginas = Int()
         imagen = String()
 
     libro = Field(lambda: Libro)
 
-    def mutate(self, info, isbn, titulo=None, precio=None, stock=None, descripcion=None, dimensiones=None, paginas=None, imagen=None):
-        libro = LibroModel.query.get(isbn)
+    def mutate(self, info, id_libro, titulo=None, descripcion=None, imagen=None):
+        libro = LibroModel.query.get(id_libro)
         if libro:
             if titulo:
                 libro.titulo = titulo
-            if precio is not None:
-                libro.precio = precio
-            if stock is not None:
-                libro.stock = stock
             if descripcion:
                 libro.descripcion = descripcion
-            if dimensiones:
-                libro.dimensiones = dimensiones
-            if paginas is not None:
-                libro.paginas = paginas
             if imagen:
                 libro.imagen = imagen
 
@@ -643,12 +557,12 @@ class updateLibro(Mutation):
 
 class deleteLibro(Mutation):
     class Arguments:
-        isbn = Int(required=True)
+        id_libro = Int(required=True)
 
     libro = Field(lambda: Libro)
 
-    def mutate(self, info, isbn):
-        libro = LibroModel.query.get(isbn)
+    def mutate(self, info, id_libro):
+        libro = LibroModel.query.get(id_libro)
         if libro:
             db.session.delete(libro)
             db.session.commit()
@@ -658,12 +572,12 @@ class deleteLibro(Mutation):
 class createLineaCarrito(Mutation):
     class Arguments:
         id_carrito = Int(required=True)
-        id_libro = Int(required=True)
+        id_ejemplar = Int(required=True)
         cantidad = Int(required=True)
     
     linea_carrito = Field(lambda: LineaCarrito)
-    def mutate(self, info, id_carrito, id_libro, cantidad):
-        linea_carrito = LineaCarritoModel(id_carrito=id_carrito, id_libro=id_libro, cantidad=cantidad)
+    def mutate(self, info, id_carrito, id_ejemplar, cantidad):
+        linea_carrito = LineaCarritoModel(id_carrito=id_carrito, id_ejemplar=id_ejemplar, cantidad=cantidad)
 
         db.session.add(linea_carrito)
         db.session.commit()
@@ -673,13 +587,13 @@ class createLineaCarrito(Mutation):
 class updateLineaCarrito(Mutation):
     class Arguments:
         id_carrito = Int(required=True)
-        id_libro = Int(required=True)
+        id_ejemplar = Int(required=True)
         cantidad = Int()
     
     linea_carrito = Field(lambda: LineaCarrito)
 
-    def mutate(self, info, id_carrito, id_libro, cantidad=None):
-        linea_carrito = LineaCarritoModel.query.filter_by(id_carrito=id_carrito, id_libro=id_libro).first()
+    def mutate(self, info, id_carrito, id_ejemplar, cantidad=None):
+        linea_carrito = LineaCarritoModel.query.filter_by(id_carrito=id_carrito, id_ejemplar=id_ejemplar).first()
         if linea_carrito:
             if(cantidad):
                 linea_carrito.cantidad = cantidad
@@ -691,13 +605,13 @@ class updateLineaCarrito(Mutation):
 
 class deleteLineaCarrito(Mutation):
     class Arguments:
-        id_libro = Int(required=True)
+        id_ejemplar = Int(required=True)
         id_carrito = Int(required=True)
 
     linea_carrito = Field(lambda: LineaCarrito)
 
-    def mutate(self, info, id_libro, id_carrito):
-        linea_carrito = LineaCarritoModel.query.filter_by(id_carrito=id_carrito, id_libro=id_libro).first()
+    def mutate(self, info, id_ejemplar, id_carrito):
+        linea_carrito = LineaCarritoModel.query.filter_by(id_carrito=id_carrito, id_ejemplar=id_ejemplar).first()
         # Deberia ser por id_carrito?
         if linea_carrito:
             db.session.delete(linea_carrito)
@@ -708,16 +622,18 @@ class deleteLineaCarrito(Mutation):
 class createLineaPedido(Mutation):
     class Arguments:
         id_pedido = Int(required=True)
-        id_libro = Int(required=True)
+        id_ejemplar = Int(required=True)
         cantidad = Int(required=True)
+        precio = Float(required=True)
 
     linea_pedido = Field(lambda: LineaPedido)
 
-    def mutate(self, info, id_pedido, id_libro, cantidad):
+    def mutate(self, info, id_pedido, id_ejemplar, cantidad, precio):
         linea_pedido = LineaPedidoModel(
             id_pedido=id_pedido,
-            id_libro=id_libro,
-            cantidad=cantidad
+            id_ejemplar=id_ejemplar,
+            cantidad=cantidad,
+            precio=precio
         )
 
         db.session.add(linea_pedido)
@@ -728,15 +644,19 @@ class createLineaPedido(Mutation):
 class updateLineaPedido(Mutation):
     class Arguments:
         id_pedido = Int(required=True)
-        id_libro = Int(required=True)
+        id_ejemplar = Int(required=True)
         cantidad = Int(required=True)
+        precio = Float(required=True)
 
     linea_pedido = Field(lambda: LineaPedido)
 
-    def mutate(self, info, id_pedido, id_libro, cantidad):
-        linea_pedido = LineaPedidoModel.query.filter_by(id_pedido=id_pedido, id_libro=id_libro).first()
+    def mutate(self, info, id_pedido, id_ejemplar, cantidad, precio):
+        linea_pedido = LineaPedidoModel.query.filter_by(id_pedido=id_pedido, id_ejemplar=id_ejemplar).first()
         if linea_pedido:
-            linea_pedido.cantidad = cantidad
+            if cantidad:
+                linea_pedido.cantidad = cantidad
+            if precio:
+                linea_pedido.precio = precio
             db.session.add(linea_pedido)
             db.session.commit()
 
@@ -745,12 +665,12 @@ class updateLineaPedido(Mutation):
 class deleteLineaPedido(Mutation):
     class Arguments:
         id_pedido = Int(required=True)
-        id_libro = Int(required=True)
+        id_ejemplar = Int(required=True)
 
     linea_pedido = Field(lambda: LineaPedido)
 
-    def mutate(self, info, id_pedido, id_libro):
-        linea_pedido = LineaPedidoModel.query.filter_by(id_pedido=id_pedido, id_libro=id_libro).first()
+    def mutate(self, info, id_pedido, id_ejemplar):
+        linea_pedido = LineaPedidoModel.query.filter_by(id_pedido=id_pedido, id_ejemplar=id_ejemplar).first()
         if linea_pedido:
             db.session.delete(linea_pedido)
             db.session.commit()
@@ -764,16 +684,21 @@ class createPedido(Mutation):
         costo_envio = Float(required=True)
         total = Float(required=True)
         id_usuario = String(required=True)
+        total_con_descuento = Float(required=True)
+        id_direccion = Int(required=True)
+
 
     pedido = Field(lambda: Pedido)
 
-    def mutate(self, info, id_envio, fecha, costo_envio, total, id_usuario):
+    def mutate(self, info, id_envio, fecha, costo_envio, total, id_usuario, total_con_descuento, id_direccion):
         pedido = PedidoModel(
             id_envio=id_envio,
             fecha=fecha,
             costo_envio=costo_envio,
             total=total,
-            id_usuario=id_usuario
+            id_usuario=id_usuario,
+            total_con_descuento=total_con_descuento,
+            id_direccion=id_direccion
         )
 
         db.session.add(pedido)
@@ -789,10 +714,12 @@ class updatePedido(Mutation):
         costo_envio = Float()
         total = Float()
         id_usuario = String()
+        id_direccion = Int()
+        total_con_descuento = Float()
 
     pedido = Field(lambda: Pedido)
 
-    def mutate(self, info, id_pedido, id_envio=None, fecha=None, costo_envio=None, total=None, id_usuario=None):
+    def mutate(self, info, id_pedido, id_envio=None, fecha=None, costo_envio=None, total=None, id_usuario=None, id_direccion=None, total_con_descuento=None):
         pedido = PedidoModel.query.get(id_pedido)
         if pedido:
             if id_envio is not None:
@@ -805,6 +732,10 @@ class updatePedido(Mutation):
                 pedido.total = total
             if id_usuario:
                 pedido.id_usuario = id_usuario
+            if id_direccion is not None:
+                pedido.id_direccion = id_direccion
+            if total_con_descuento is not None:
+                pedido.total_con_descuento = total_con_descuento
 
             db.session.add(pedido)
             db.session.commit()
@@ -1086,8 +1017,65 @@ class deleteUsuario(Mutation):
 
         return deleteUsuario(usuario=usuario)
 
+class createEjemplar(Mutation):
+    class Arguments:
+        isbn = String(required=True)
+        precio = Float(required=True)
+        stock = Int(required=True)
+        dimensiones = String(required=True)
+        paginas = Int(required=True)
+        id_libro = Int(required=True)
+        id_editorial = Int(required=True)
+        id_encuadernado = Int(required=True)
+    
+    ejemplar = Field(lambda: Ejemplar)
+
+    def mutate(self, info, isbn, precio, stock, dimensiones, paginas, id_libro, id_editorial, id_encuadernado):
+        ejemplar = EjemplarModel(isbn=isbn, precio=precio, stock=stock, dimensiones=dimensiones, paginas=paginas, id_libro=id_libro, id_editorial=id_editorial, id_encuadernado=id_encuadernado)
+
+        db.session.add(ejemplar)
+        db.session.commit()
+        
+        return createEjemplar(ejemplar=ejemplar)
+
+class updateEjemplar(Mutation):
+    class Arguments:
+        isbn = String(required=True)
+        precio = Float()
+        stock = Int()
+        dimensiones = String()
+        paginas = Int()
+        id_libro = Int()
+        id_editorial = Int()
+        id_encuadernado = Int()
+
+    ejemplar = Field(lambda: Ejemplar)
+
+    def mutate(self, info, isbn, precio=None, stock=None, dimensiones=None, paginas=None, id_libro=None, id_editorial=None, id_encuadernado=None):
+        ejemplar = EjemplarModel.query.get(isbn)
+        if ejemplar:
+            if precio:
+                ejemplar.precio = precio
+            if stock:
+                ejemplar.stock = stock
+            if dimensiones:
+                ejemplar.dimensiones = dimensiones
+            if paginas:
+                ejemplar.paginas = paginas
+            if id_libro:
+                ejemplar.id_libro = id_libro
+            if id_editorial:
+                ejemplar.id_editorial = id_editorial
+            if id_encuadernado:
+                ejemplar.id_encuadernado = id_encuadernado
+            db.session.add(ejemplar)
+            db.session.commit()
+
+        return updateEjemplar(ejemplar=ejemplar)
 
 class Mutation(ObjectType):
+    create_ejemplar = createEjemplar.Field()
+    update_ejemplar = updateEjemplar.Field()
     create_autor = createAutor.Field()
     update_autor = updateAutor.Field()
     delete_autor = deleteAutor.Field()
@@ -1112,14 +1100,10 @@ class Mutation(ObjectType):
     delete_genero = deleteGenero.Field()
     create_libro_autor = createLibroAutor.Field()
     delete_libro_autor = deleteLibroAutor.Field()
-    create_libro_editorial = createLibroEditorial.Field()
-    delete_libro_editorial = deleteLibroEditorial.Field()
-    create_libro_encuadernado = createLibroEncuadernado.Field()
-    delete_libro_encuadernado = deleteLibroEncuadernado.Field()
     create_libro_genero = createLibroGenero.Field()
     delete_libro_genero = deleteLibroGenero.Field()
-    create_libro_promocion = createLibroPromocion.Field()
-    delete_libro_promocion = deleteLibroPromocion.Field()
+    create_ejemplar_promocion = createEjemplarPromocion.Field()
+    delete_ejemplar_promocion = deleteEjemplarPromocion.Field()
     create_libro = createLibro.Field()
     update_libro = updateLibro.Field()
     delete_libro = deleteLibro.Field()
