@@ -438,17 +438,17 @@ class createLibroAutor(Mutation):
 class deleteLibroAutor(Mutation):
     class Arguments:
         id_libro = Int(required=True)
+        id_autor = Int(required=True)
 
     libro_autor = Field(lambda: LibroAutor)
 
-    def mutate(self, info, id_libro):
-        libro_autor = LibroAutorModel.query.filter_by(id_libro=id_libro).all()
+    def mutate(self, info, id_libro, id_autor):
+        libro_autor = LibroAutorModel.query.filter_by(id_libro=id_libro, id_autor=id_autor).first()
         if libro_autor:
-            for libro_autor_instance in libro_autor:
-                db.session.delete(libro_autor_instance)
+            db.session.delete(libro_autor)
             db.session.commit()
 
-        return deleteLibroAutor(libro_autor=libro_autor[0])
+        return deleteLibroAutor(libro_autor=libro_autor)
 
 
 class createLibroGenero(Mutation):
@@ -469,17 +469,17 @@ class createLibroGenero(Mutation):
 class deleteLibroGenero(Mutation):
     class Arguments:
         id_libro = Int(required=True)
+        id_genero = Int(required=True)
 
     libro_genero = Field(lambda: LibroGenero)
 
-    def mutate(self, info, id_libro):
-        libro_genero = LibroGeneroModel.query.filter_by(id_libro=id_libro).all()
+    def mutate(self, info, id_libro, id_genero):
+        libro_genero = LibroGeneroModel.query.filter_by(id_libro=id_libro, id_genero=id_genero).first()
         if libro_genero:
-            for libro_genero_instance in libro_genero:
-                db.session.delete(libro_genero_instance)
+            db.session.delete(libro_genero)
             db.session.commit()
 
-        return deleteLibroGenero(libro_genero=libro_genero[0])
+        return deleteLibroGenero(libro_genero=libro_genero)
 
 class createEjemplarPromocion(Mutation):
     class Arguments:
@@ -645,8 +645,8 @@ class updateLineaPedido(Mutation):
     class Arguments:
         id_pedido = Int(required=True)
         id_ejemplar = Int(required=True)
-        cantidad = Int(required=True)
-        precio = Float(required=True)
+        cantidad = Int(required=False)
+        precio = Float(required=False)
 
     linea_pedido = Field(lambda: LineaPedido)
 
@@ -680,17 +680,17 @@ class deleteLineaPedido(Mutation):
 class createPedido(Mutation):
     class Arguments:
         id_envio = Int(required=True)
-        fecha = String(required=True)
+        fecha = String(required=False)
         costo_envio = Float(required=True)
-        total = Float(required=True)
+        total = Float(required=False)
         id_usuario = String(required=True)
-        total_con_descuento = Float(required=True)
+        total_con_descuento = Float(required=False)
         id_direccion = Int(required=True)
 
 
     pedido = Field(lambda: Pedido)
 
-    def mutate(self, info, id_envio, fecha, costo_envio, total, id_usuario, total_con_descuento, id_direccion):
+    def mutate(self, info, id_envio, costo_envio, id_usuario, id_direccion, fecha=None, total=None, total_con_descuento=None):
         pedido = PedidoModel(
             id_envio=id_envio,
             fecha=fecha,
@@ -758,7 +758,7 @@ class deletePedido(Mutation):
 
 class createPromocionDescuento(Mutation):
     class Arguments:
-        nombre_promocion = String()
+        nombre_promocion = String(required=True)
         porcentaje = Float(required=True)
         fecha_inicio = String(required=True)
         fecha_fin = String(required=True)
@@ -911,13 +911,12 @@ class deleteSesion(Mutation):
 
 class createTipoEnvio(Mutation):
     class Arguments:
-        id_tipo_envio = Int(required=True)
         descripcion = String(required=True)
     
     tipo_envio = Field(lambda: TipoEnvio)
 
-    def mutate(self, info, id_tipo_envio, descripcion):
-        tipo_envio = TipoEnvioModel(id_tipo_envio=id_tipo_envio, descripcion=descripcion)
+    def mutate(self, info, descripcion):
+        tipo_envio = TipoEnvioModel(descripcion=descripcion)
 
         db.session.add(tipo_envio)
         db.session.commit()
@@ -961,12 +960,12 @@ class createUsuario(Mutation):
         nombre = String(required=True)
         apellido = String(required=True)
         email = String(required=True)
-        imagen = String(required=True)
-        rol = Int(required=True)
+        imagen = String(required=False)
+        rol = Int(required=False)
     
     usuario = Field(lambda: Usuario)
 
-    def mutate(self, info, id_usuario, nombre, apellido, email, imagen, rol):
+    def mutate(self, info, id_usuario, nombre, apellido, email, imagen=None, rol=None):
         usuario = UsuarioModel(id_usuario=id_usuario, nombre=nombre, apellido=apellido, email=email, imagen=imagen, rol=rol, fecha_creacion=datetime.now())
 
         db.session.add(usuario)
@@ -1019,7 +1018,7 @@ class deleteUsuario(Mutation):
 
 class createEjemplar(Mutation):
     class Arguments:
-        isbn = String(required=True)
+        isbn = Int(required=True)
         precio = Float(required=True)
         stock = Int(required=True)
         dimensiones = String(required=True)
@@ -1040,7 +1039,7 @@ class createEjemplar(Mutation):
 
 class updateEjemplar(Mutation):
     class Arguments:
-        isbn = String(required=True)
+        isbn = Int(required=True)
         precio = Float()
         stock = Int()
         dimensiones = String()
