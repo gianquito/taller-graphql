@@ -11,5 +11,5 @@ class Pedido(db.Model):
     id_usuario = db.Column(db.Text, db.ForeignKey("usuario.id_usuario"), nullable=False)
     envio = db.relationship("TipoEnvio", backref="pedidos")
     usuario = db.relationship("Usuario", backref="pedidos")
-    id_direccion = db.Column(db.Integer, db.ForeignKey("direccion.id_direccion"), nullable=False)
+    id_direccion = db.Column(db.Integer, db.ForeignKey("direccion.id_direccion"))
     direccion = db.relationship("Direccion", backref="pedidos")
