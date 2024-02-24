@@ -685,12 +685,12 @@ class createPedido(Mutation):
         total = Float(required=False)
         id_usuario = String(required=True)
         total_con_descuento = Float(required=False)
-        id_direccion = Int(required=True)
+        id_direccion = Int(required=False)
 
 
     pedido = Field(lambda: Pedido)
 
-    def mutate(self, info, id_envio, costo_envio, id_usuario, id_direccion, fecha=None, total=None, total_con_descuento=None):
+    def mutate(self, info, id_envio, costo_envio, id_usuario, id_direccion=None, fecha=None, total=None, total_con_descuento=None):
         pedido = PedidoModel(
             id_envio=id_envio,
             fecha=fecha,
