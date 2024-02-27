@@ -498,16 +498,15 @@ class createEjemplarPromocion(Mutation):
 
 class deleteEjemplarPromocion(Mutation):
     class Arguments:
-        id_ejemplar = Int(required=True)
         id_promocion_descuento = Int(required=True)
 
     ejemplar_promocion = Field(lambda: EjemplarPromocion)
 
-    def mutate(self, info, id_ejemplar, id_promocion_descuento):
-        ejemplar_promocion = EjemplarPromocionModel.query.filter_by(id_ejemplar=id_ejemplar, id_promocion_descuento=id_promocion_descuento).first()
-        if ejemplar_promocion:
+    def mutate(self, info, id_promocion_descuento):
+        ejemplar_promociones = EjemplarPromocionModel.query.filter_by(id_promocion_descuento=id_promocion_descuento).all()
+        for ejemplar_promocion in ejemplar_promociones:
             db.session.delete(ejemplar_promocion)
-            db.session.commit()
+        db.session.commit()
 
         return deleteEjemplarPromocion(ejemplar_promocion=ejemplar_promocion)
 
