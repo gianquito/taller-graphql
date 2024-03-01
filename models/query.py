@@ -236,14 +236,6 @@ class Query(ObjectType):
         return query.join(EjemplarModel).all()
 
     def resolve_lineas_pedidos(self, info, id_pedido=None, id_ejemplar=None):
-        sesion_id = info.context.headers.get('sesionId')
-        if not sesion_id:
-            # Maneja el caso en que la cookie "sesionId" no este presente o sea invalida.
-            raise GraphQLError('La cookie de sesión no está presente o es inválida.')
-        sesion = SesionModel.query.filter(SesionModel.id_sesion == sesion_id).first()
-        if sesion is None:
-            # Si la sesion no existe genera un error indicando que la sesión no esta autenticada.
-            raise GraphQLError('La sesión no existe o no está autenticada.')
         query = LineaPedido.get_query(info=info)
         if id_pedido:
             query = query.filter(LineaPedidoModel.id_pedido == id_pedido)
