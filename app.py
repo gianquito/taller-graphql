@@ -3,6 +3,7 @@ from models.schema import schema
 from flask import request
 import requests
 import uuid
+import base64
 
 
 from api_config import (
@@ -10,7 +11,7 @@ from api_config import (
     db
 )
 
-def userExists(userData):
+def userExists(idUsuario):
     query = {
         'query': '''
             query resolve_usuarios($idUsuario: String!) {
@@ -20,7 +21,7 @@ def userExists(userData):
             }
         ''',
         'variables': {
-            'idUsuario': userData["sub"] # Replace with the user ID you want to check
+            'idUsuario':  idUsuario# Replace with the user ID you want to check
         }
     }
     response = requests.post("http://localhost:5000/graphql", json=query)
@@ -36,7 +37,7 @@ app.add_url_rule('/graphql', view_func=GraphQLView.as_view(
     graphiql=True #Interfaz grafica
 ))
 
-def createUser(userData):
+def createUser(idUsuario, nombre, apellido, email, imagen):
     createUserQuery = {
             'query': '''
                 mutation ($idUsuario: String!, $nombre: String!, $apellido: String!, $email: String!, $imagen: String!, $rol: Int!) {
@@ -48,17 +49,17 @@ def createUser(userData):
                 }
             ''',
             'variables': {
-                'idUsuario': userData["sub"],
-                'nombre': userData["given_name"],
-                'apellido': userData["family_name"],
-                'email': userData["email"],
-                'imagen': userData["picture"],
+                'idUsuario': idUsuario,
+                'nombre': nombre,
+                'apellido': apellido,
+                'email': email,
+                'imagen': imagen,
                 'rol': '2',
             }
         }
     requests.post("http://localhost:5000/graphql", json=createUserQuery)
 
-def createSesion(userData):
+def createSesion(idUsuario):
     sesionId = str(uuid.uuid4())
 
     createSesionQuery = {
@@ -73,7 +74,7 @@ def createSesion(userData):
         ''',
         'variables': {
             'idSesion': sesionId,
-            'idUsuario': userData["sub"],
+            'idUsuario': idUsuario,
         }
     }
     requests.post("http://localhost:5000/graphql", json=createSesionQuery)
@@ -97,7 +98,7 @@ def deleteSesion(sesionId):
     return requests.post("http://localhost:5000/graphql", json=deleteSesionQuery)
 
 @app.route('/validate', methods=['POST']) # @ decorador
-def validateLogin():
+def validateGoogle():
     #Verificamos si el cliente envio el codigo
     code = request.get_data(as_text=True)
     if(code is None): return '', 400
@@ -118,10 +119,42 @@ def validateLogin():
     #Crear usuario y sesion en db
     #Chequear que no exista
     userData = jwtRes.json()
-    if(userExists(userData) == False):
-        createUser(userData)
+    if(userExists(userData["sub"]) == False):
+        createUser(userData["sub"], userData["given_name"], userData["family_name"], userData["email"], userData["picture"])
+    return createSesion(userData["sub"])
 
-    return createSesion(userData)
+@app.route('/validateMs', methods=['POST']) # @ decorador
+def validateMicrosoft():
+    #Verificamos si el cliente envio el codigo
+    code = request.get_data(as_text=True)
+    if(code is None): return '', 400
+
+    #Enviamos el codigo a microsoft para validarlo
+    MsResponse = requests.post(f"https://login.microsoftonline.com/common/oauth2/v2.0/token",
+                            data={"code": code,
+                                    "client_id": "10f88338-8bd0-45ac-a3c9-5f68ca25dc8b",
+                                    "client_secret": "JQI8Q~ErbPidFd-8bJ7uAC8.eGJ9OlMkZxgBwc.r",
+                                    "redirect_uri": "http://localhost:3000/ingresar",
+                                    "grant_type": "authorization_code",
+                                    "scope": "user.read"}
+                                )
+    if(MsResponse.status_code != 200): return MsResponse.json(), 401
+    #A partir de la respuesta de microsoft solicitamos informacion del usuario
+    userRes = requests.get(f"https://graph.microsoft.com/v1.0/me", headers={"Authorization": "Bearer "+MsResponse.json()["access_token"]})
+    if(userRes.status_code != 200): return userRes.json(), 401
+    
+    #Solicitamos la imagen de perfil
+    imageRes = requests.get(f"https://graph.microsoft.com/v1.0/me/photo/$value", headers={"Authorization": "Bearer "+MsResponse.json()["access_token"]})
+    if(imageRes.status_code != 200): return imageRes.text(), 401
+
+    base64_image = base64.b64encode(imageRes.content).decode('utf-8')
+    
+    #Crear usuario y sesion en db
+    #Chequear que no exista
+    userData = userRes.json()
+    if(userExists(userData["id"]) == False):
+        createUser(userData["id"], userData["givenName"], userData["surname"], userData["mail"], f"data:image/jpeg;base64,{base64_image}")
+    return createSesion(userData["id"])
 
 @app.route('/logout', methods=['POST']) # @ decorador
 def userLogout():

@@ -438,17 +438,17 @@ class createLibroAutor(Mutation):
 class deleteLibroAutor(Mutation):
     class Arguments:
         id_libro = Int(required=True)
-        id_autor = Int(required=True)
 
     libro_autor = Field(lambda: LibroAutor)
 
-    def mutate(self, info, id_libro, id_autor):
-        libro_autor = LibroAutorModel.query.filter_by(id_libro=id_libro, id_autor=id_autor).first()
+    def mutate(self, info, id_libro):
+        libro_autor = LibroAutorModel.query.filter_by(id_libro=id_libro).all()
         if libro_autor:
-            db.session.delete(libro_autor)
+            for libro_autor_instance in libro_autor:
+                db.session.delete(libro_autor_instance)
             db.session.commit()
 
-        return deleteLibroAutor(libro_autor=libro_autor)
+        return deleteLibroAutor(libro_autor=libro_autor[0])
 
 
 class createLibroGenero(Mutation):
@@ -469,17 +469,17 @@ class createLibroGenero(Mutation):
 class deleteLibroGenero(Mutation):
     class Arguments:
         id_libro = Int(required=True)
-        id_genero = Int(required=True)
 
     libro_genero = Field(lambda: LibroGenero)
 
-    def mutate(self, info, id_libro, id_genero):
-        libro_genero = LibroGeneroModel.query.filter_by(id_libro=id_libro, id_genero=id_genero).first()
+    def mutate(self, info, id_libro):
+        libro_genero = LibroGeneroModel.query.filter_by(id_libro=id_libro).all()
         if libro_genero:
-            db.session.delete(libro_genero)
+            for libro_genero_instance in libro_genero:
+                db.session.delete(libro_genero_instance)
             db.session.commit()
 
-        return deleteLibroGenero(libro_genero=libro_genero)
+        return deleteLibroGenero(libro_genero=libro_genero[0])
 
 class createEjemplarPromocion(Mutation):
     class Arguments:
@@ -1051,10 +1051,11 @@ class updateEjemplar(Mutation):
 
     def mutate(self, info, isbn, precio=None, stock=None, dimensiones=None, paginas=None, id_libro=None, id_editorial=None, id_encuadernado=None):
         ejemplar = EjemplarModel.query.get(isbn)
+        print(stock)
         if ejemplar:
             if precio:
                 ejemplar.precio = precio
-            if stock:
+            if stock is not None:
                 ejemplar.stock = stock
             if dimensiones:
                 ejemplar.dimensiones = dimensiones
