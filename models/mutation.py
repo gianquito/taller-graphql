@@ -483,7 +483,7 @@ class deleteLibroGenero(Mutation):
 
 class createEjemplarPromocion(Mutation):
     class Arguments:
-        id_ejemplar = Int(required=True)
+        id_ejemplar = String(required=True)
         id_promocion_descuento = Int(required=True)
     
     ejemplar_promocion = Field(lambda: EjemplarPromocion)
@@ -571,7 +571,7 @@ class deleteLibro(Mutation):
 class createLineaCarrito(Mutation):
     class Arguments:
         id_carrito = Int(required=True)
-        id_ejemplar = Int(required=True)
+        id_ejemplar = String(required=True)
         cantidad = Int(required=True)
     
     linea_carrito = Field(lambda: LineaCarrito)
@@ -586,7 +586,7 @@ class createLineaCarrito(Mutation):
 class updateLineaCarrito(Mutation):
     class Arguments:
         id_carrito = Int(required=True)
-        id_ejemplar = Int(required=True)
+        id_ejemplar = String(required=True)
         cantidad = Int()
     
     linea_carrito = Field(lambda: LineaCarrito)
@@ -604,7 +604,7 @@ class updateLineaCarrito(Mutation):
 
 class deleteLineaCarrito(Mutation):
     class Arguments:
-        id_ejemplar = Int(required=True)
+        id_ejemplar = String(required=True)
         id_carrito = Int(required=True)
 
     linea_carrito = Field(lambda: LineaCarrito)
@@ -621,7 +621,7 @@ class deleteLineaCarrito(Mutation):
 class createLineaPedido(Mutation):
     class Arguments:
         id_pedido = Int(required=True)
-        id_ejemplar = Int(required=True)
+        id_ejemplar = String(required=True)
         cantidad = Int(required=True)
         precio = Float(required=True)
 
@@ -643,7 +643,7 @@ class createLineaPedido(Mutation):
 class updateLineaPedido(Mutation):
     class Arguments:
         id_pedido = Int(required=True)
-        id_ejemplar = Int(required=True)
+        id_ejemplar = String(required=True)
         cantidad = Int(required=False)
         precio = Float(required=False)
 
@@ -664,7 +664,7 @@ class updateLineaPedido(Mutation):
 class deleteLineaPedido(Mutation):
     class Arguments:
         id_pedido = Int(required=True)
-        id_ejemplar = Int(required=True)
+        id_ejemplar = String(required=True)
 
     linea_pedido = Field(lambda: LineaPedido)
 
@@ -1017,7 +1017,7 @@ class deleteUsuario(Mutation):
 
 class createEjemplar(Mutation):
     class Arguments:
-        isbn = Int(required=True)
+        isbn = String(required=True)
         precio = Float(required=True)
         stock = Int(required=True)
         dimensiones = String(required=True)
@@ -1038,7 +1038,7 @@ class createEjemplar(Mutation):
 
 class updateEjemplar(Mutation):
     class Arguments:
-        isbn = Int(required=True)
+        isbn = String(required=True)
         precio = Float()
         stock = Int()
         dimensiones = String()

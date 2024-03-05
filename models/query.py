@@ -77,17 +77,17 @@ class Query(ObjectType):
     generos = List(lambda: Genero, id_genero=Int(), nombre_genero=String())
     libros_autores = List(lambda: LibroAutor, id_libro=Int(), id_autor=Int())
     libros_generos = List(lambda: LibroGenero, id_libro=Int(), id_genero=Int())
-    ejemplares_promociones = List(lambda: EjemplarPromocion, id_ejemplar=Int(), id_promocion_descuento=Int())
+    ejemplares_promociones = List(lambda: EjemplarPromocion, id_ejemplar=String(), id_promocion_descuento=Int())
     libros = List(lambda: Libro, id_libro=Int(), titulo=String())
-    ejemplares_en_carrito = List(lambda: LineaCarrito, id_carrito=Int(), id_ejemplar=Int())
-    lineas_pedidos = List(lambda: LineaPedido, id_pedido=Int(), id_ejemplar=Int())
+    ejemplares_en_carrito = List(lambda: LineaCarrito, id_carrito=Int(), id_ejemplar=String())
+    lineas_pedidos = List(lambda: LineaPedido, id_pedido=Int(), id_ejemplar=String())
     pedidos = List(lambda: Pedido, id_pedido=Int(), id_envio=Int(), id_usuario=String(), fecha=String()) #Esta bien fecha = String?
     promociones_descuento = List(lambda: PromocionDescuento, id_promocion_descuento=Int(), nombre_promocion=String())
     resenias = List(lambda: Resenia, texto=String(), valoracion=Int(), id_usuario=String(), id_libro=Int())
     sesiones = List(lambda: Sesion, id_sesion=String())
     tipos_envio = List(lambda: TipoEnvio, id_tipo_envio=Int(), descripcion=String())
     usuarios = List(lambda: Usuario, id_usuario=String())
-    ejemplares = List(lambda: Ejemplar, isbn=Int(), precio=Float(), stock=Int(), dimensiones=String(), paginas=Int(), id_libro=Int(), id_editorial=Int(), id_encuadernado=Int())
+    ejemplares = List(lambda: Ejemplar, isbn=String(), precio=Float(), stock=Int(), dimensiones=String(), paginas=Int(), id_libro=Int(), id_editorial=Int(), id_encuadernado=Int())
     
 
     def resolve_ejemplares(self, info, isbn=None, precio=None, stock=None, id_libro=None, id_editorial=None, id_encuadernado=None):
