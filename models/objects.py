@@ -26,6 +26,11 @@ from models.pedido import Pedido as PedidoModel
 from models.promocion_descuento import PromocionDescuento as PromocionDescuentoModel
 from models.resenia import Resenia as ReseniaModel
 from models.tipo_envio import TipoEnvio as TipoEnvioModel
+from models.pregunta_frecuente import PreguntaFrecuente as PreguntaFrecuenteModel
+
+class PreguntaFrecuente(SQLAlchemyObjectType):
+    class Meta:
+        model = PreguntaFrecuenteModel
 
 class Ejemplar(SQLAlchemyObjectType):
     class Meta:
