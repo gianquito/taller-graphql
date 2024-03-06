@@ -1,5 +1,3 @@
-#from flask import abort
-from werkzeug.exceptions import HTTPException
 from graphene import (
     ObjectType,
     String,
@@ -11,7 +9,8 @@ from graphene import (
     Float
 )
 
-from sqlalchemy import func
+from sqlalchemy import func, or_
+from sqlalchemy.orm import joinedload
 
 from graphql import GraphQLError
 
@@ -227,8 +226,14 @@ class Query(ObjectType):
         query = Libro.get_query(info=info)
         if id_libro:
             query = query.filter(LibroModel.id_libro==id_libro)
+            query = query.filter(LibroAutorModel.id_libro==id_libro)
         if titulo:
-            query = query.filter(func.lower(LibroModel.titulo).startswith(func.lower(titulo)))
+            query = query.join(LibroAutorModel).join(AutorModel).filter(
+            or_(
+                func.lower(LibroModel.titulo).startswith(func.lower(titulo)),
+                func.lower(AutorModel.nombre_autor).startswith(func.lower(titulo))
+            )
+        )
         return query.all()
 
     def resolve_ejemplares_en_carrito(self, info, id_carrito=None, id_ejemplar=None):
