@@ -34,7 +34,8 @@ from .objects import (
     Sesion,
     TipoEnvio,
     Usuario,
-    Ejemplar
+    Ejemplar,
+    PreguntaFrecuente
 )
 
 from datetime import datetime
@@ -61,6 +62,44 @@ from .sesion import Sesion as SesionModel
 from .tipo_envio import TipoEnvio as TipoEnvioModel
 from .usuario import Usuario as UsuarioModel
 from .ejemplar import Ejemplar as EjemplarModel
+from .pregunta_frecuente import PreguntaFrecuente as PreguntaFrecuenteModel
+
+class createPreguntaFrecuente(Mutation):
+    class Arguments:
+        pregunta = String(required=True)
+        respuesta = String(required=True)
+    pregunta_frecuente = Field(lambda: PreguntaFrecuente)
+    def mutate(self, info, pregunta, respuesta):
+        pregunta_frecuente = PreguntaFrecuenteModel(pregunta=pregunta, respuesta=respuesta)
+        db.session.add(pregunta_frecuente)
+        db.session.commit()
+        return createPreguntaFrecuente(pregunta_frecuente=pregunta_frecuente)
+
+class updatePreguntaFrecuente(Mutation):
+    class Arguments:
+        id = Int(required=True)
+        pregunta = String()
+        respuesta = String()
+    pregunta_frecuente = Field(lambda: PreguntaFrecuente)
+    def mutate(self, info, id, pregunta=None, respuesta=None):
+        pregunta_frecuente = PreguntaFrecuenteModel.query.filter_by(id=id).first()
+        if pregunta:
+            pregunta_frecuente.pregunta = pregunta
+        if respuesta:
+            pregunta_frecuente.respuesta = respuesta
+        db.session.commit()
+        return updatePreguntaFrecuente(pregunta_frecuente=pregunta_frecuente)
+
+class deletePreguntaFrecuente(Mutation):
+    class Arguments:
+        id = Int(required=True)
+    pregunta_frecuente = Field(lambda: PreguntaFrecuente)
+    def mutate(self, info, id):
+        pregunta_frecuente = PreguntaFrecuenteModel.query.filter_by(id=id).first()
+        if pregunta_frecuente:
+            db.session.delete(pregunta_frecuente)
+            db.session.commit()
+        return deletePreguntaFrecuente(pregunta_frecuente=pregunta_frecuente)
 
 class createAutor(Mutation):
     class Arguments:
@@ -1073,6 +1112,9 @@ class updateEjemplar(Mutation):
         return updateEjemplar(ejemplar=ejemplar)
 
 class Mutation(ObjectType):
+    create_pregunta_frecuente = createPreguntaFrecuente.Field()
+    update_pregunta_frecuente = updatePreguntaFrecuente.Field()
+    delete_pregunta_frecuente = deletePreguntaFrecuente.Field()
     create_ejemplar = createEjemplar.Field()
     update_ejemplar = updateEjemplar.Field()
     create_autor = createAutor.Field()

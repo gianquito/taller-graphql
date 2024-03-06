@@ -42,7 +42,8 @@ from .objects import (
                     Resenia,
                     Sesion,
                     TipoEnvio,
-                    Usuario,)
+                    Usuario,
+                    PreguntaFrecuente)
 
 from .autor import Autor as AutorModel
 from .ciudad import Ciudad as CiudadModel
@@ -65,6 +66,7 @@ from .sesion import Sesion as SesionModel
 from .tipo_envio import TipoEnvio as TipoEnvioModel
 from .usuario import Usuario as UsuarioModel
 from .ejemplar import Ejemplar as EjemplarModel
+from .pregunta_frecuente import PreguntaFrecuente as PreguntaFrecuenteModel
 
 class Query(ObjectType):
     autores = List(lambda: Autor, id_autor=Int(), nombre_autor=String())
@@ -88,7 +90,17 @@ class Query(ObjectType):
     tipos_envio = List(lambda: TipoEnvio, id_tipo_envio=Int(), descripcion=String())
     usuarios = List(lambda: Usuario, id_usuario=String())
     ejemplares = List(lambda: Ejemplar, isbn=String(), precio=Float(), stock=Int(), dimensiones=String(), paginas=Int(), id_libro=Int(), id_editorial=Int(), id_encuadernado=Int())
-    
+    preguntas_frecuentes = List(lambda: PreguntaFrecuente, id=Int(), pregunta=String(), respuesta=String())
+
+    def resolve_preguntas_frecuentes(self, info, id=None, pregunta=None, respuesta=None):
+        query = PreguntaFrecuente.get_query(info=info)
+        if id:
+            query = query.filter(PreguntaFrecuenteModel.id == id)
+        if pregunta:
+            query = query.filter(PreguntaFrecuenteModel.pregunta.startswith(pregunta))
+        if respuesta:
+            query = query.filter(PreguntaFrecuenteModel.respuesta.startswith(respuesta))
+        return query.all()
 
     def resolve_ejemplares(self, info, isbn=None, precio=None, stock=None, id_libro=None, id_editorial=None, id_encuadernado=None):
         query = Ejemplar.get_query(info=info)
